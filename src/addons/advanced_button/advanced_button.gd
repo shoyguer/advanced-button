@@ -1,23 +1,18 @@
+# MIT License
+# Copyright (c) 2025 Lucas "Shoyguer" Melo
+
 @tool
-class_name GeneralButton
-extends Control
-## General use button.
+class_name AdvancedButton
+extends BaseButton
+## Advanced general use button.
+##
+## Customizable button with comprehensive tools to fit your UI/UX needs.
 
 
 #region Properties
-## Emitted when button is pressed.
-signal button_pressed(button: GeneralButton)
 
 #region Constants & Enums
 const DEFAULT_TEXTURE_SIZE := Vector2.ZERO
-
-## Button visual states
-enum ButtonState {
-	NORMAL,
-	HOVER,
-	PRESSED,
-	DISABLED
-}
 
 ## Label position options
 enum LabelPosition {
@@ -54,23 +49,13 @@ enum LabelVerticalPosition {
 }
 #endregion
 
-## The current visual state of the button.
-@export var button_state := ButtonState.NORMAL: set = _set_button_state
-## Whether the stylebox should change with interaction and disabled state.
-@export var stylebox_interaction: bool = true: set = _set_stylebox_interaction
-## Whether the textures should change with interaction and disabled state.
-@export var texture_interaction: bool = false: set = _set_texture_interaction
-
-## Whether the button is toggable.
-@export var toggable: bool = false: set = _set_toggable
 ## If enabled, a toggled (pressed) button cannot be untoggled by clicking, only by code.
 @export var toggle_lock: bool = false: set = _set_toggle_lock
-## Whether the button is disabled.
-@export var is_disabled: bool = false: set = _set_is_disabled
+
 
 #region Label
-@export_category("Label")
-## Whether the texture has a label.
+@export_group("Label")
+## Whether the button uses label text.
 @export var has_label: bool = true: set = _set_has_label
 ## The text displayed on the label.
 @export var label_text: String = "Button": set = _set_label_text
@@ -82,7 +67,19 @@ enum LabelVerticalPosition {
 @export var font_size: int = 16: set = _set_font_size
 ## The color of the font outline.
 
-@export_group("Label Effects")
+@export_subgroup("Label Positioning")
+## The separation between the label and the texture.
+@export var label_separation: int = 4: set = _set_label_separation
+## The position of the label relative to the texture.
+@export var label_position := LabelPosition.INSIDE: set = _set_label_position
+## The horizontal position of the label text.
+@export var label_horizontal_position := LabelHorizontalPosition.CENTER: set = _set_label_horizontal_position
+## The vertical position of the label text.
+@export var label_vertical_position := LabelVerticalPosition.CENTER: set = _set_label_vertical_position
+## The offset of the label text.
+@export var label_offset := Vector2.ZERO: set = _set_label_offset
+
+@export_subgroup("Label Effects")
 ## The outline size of the font.
 @export var font_outline_size: int = 0: set = _set_font_outline_size
 ## The color of the font outline.
@@ -95,27 +92,16 @@ enum LabelVerticalPosition {
 @export var font_shadow_offset := Vector2.ONE: set = _set_font_shadow_offset
 ## The spread of the font shadow.
 @export var font_shadow_spread: int = 0: set = _set_font_shadow_spread
-@export_group("Label Positioning")
-## The separation between the label and the texture.
-@export var label_separation: int = 4: set = _set_label_separation
-## The position of the label relative to the texture.
-@export var label_position := LabelPosition.INSIDE: set = _set_label_position
-## The horizontal position of the label text.
-@export var label_horizontal_position := LabelHorizontalPosition.CENTER: set = _set_label_horizontal_position
-## The vertical position of the label text.
-@export var label_vertical_position := LabelVerticalPosition.CENTER: set = _set_label_vertical_position
-## The offset of the label text.
-@export var label_offset := Vector2.ZERO: set = _set_label_offset
 #endregion
 
 #region Appearance
-@export_category("Appearance")
-
-@export_subgroup("Textures")
+@export_group("Textures")
+## Whether the textures should change with interaction and disabled state.
+@export var texture_interaction: bool = false: set = _set_texture_interaction
 ## The fixed size of the texture.
 @export var texture_size := Vector2.ZERO: set = _set_texture_size
-@export_tool_button("Reset Size", "TextureRect") var reset_size_action = _reset_texture_size
-
+## Button used for reseting texture size to default.
+@export_tool_button("Reset Size", "TextureRect") var _reset_size_action = _reset_texture_size
 ## The texture used when the texture is in its normal state.
 @export var normal_texture: Texture2D = null: set = _set_normal_texture
 ## The texture used when the texture is hovered.
@@ -125,7 +111,9 @@ enum LabelVerticalPosition {
 ## The texture used when the texture is disabled.
 @export var disabled_texture: Texture2D = null: set = _set_disabled_texture
 
-@export_subgroup("Style Boxes")
+@export_group("Style Boxes")
+## Whether the stylebox should change with interaction and disabled state.
+@export var stylebox_interaction: bool = true: set = _set_stylebox_interaction
 ## The stylebox used when the button is in its normal state.
 @export var normal_stylebox: StyleBox = null: set = _set_normal_stylebox
 ## The stylebox used when the button is hovered.
@@ -142,20 +130,14 @@ var _cached_label_size := Vector2.ZERO
 #endregion
 
 
-#region Lifecycle
 func _ready() -> void:
 	normal_texture = normal_texture
 	hover_texture = hover_texture
 	pressed_texture = pressed_texture
 	disabled_texture = disabled_texture
 
-	button_state = button_state
-	is_disabled = is_disabled
-	toggable = toggable
 	texture_size = texture_size
 	
-	mouse_entered.connect(_on_mouse_entered)
-	mouse_exited.connect(_on_mouse_exited)
 	resized.connect(_calculate_layout)
 	
 	_update_cached_label_size()
@@ -173,8 +155,7 @@ func _get_minimum_size() -> Vector2:
 	if texture_size != Vector2.ZERO:
 		tex_size = texture_size
 	
-	if not has_label:
-		return tex_size
+	if not has_label: return tex_size
 	
 	var label_size = _cached_label_size
 	var padding = float(label_separation)
@@ -203,7 +184,11 @@ func _draw() -> void:
 	# Draw label
 	if has_label:
 		_draw_label()
-#endregion
+
+
+func _toggled(toggled_on: bool) -> void:
+	if toggle_lock and not toggled_on:
+		set_pressed_no_signal(true)
 
 
 #region Layout & Drawing
@@ -396,90 +381,34 @@ func _draw_label() -> void:
 #region State Helpers
 ## Gets the current texture based on button state
 func _get_current_texture() -> Texture2D:
-	match button_state:
-		ButtonState.NORMAL:
+	match get_draw_mode():
+		DRAW_NORMAL:
 			return normal_texture
-		ButtonState.HOVER:
+		DRAW_HOVER:
 			return hover_texture if hover_texture else normal_texture
-		ButtonState.PRESSED:
+		DRAW_PRESSED, DRAW_HOVER_PRESSED:
 			return pressed_texture if pressed_texture else normal_texture
-		ButtonState.DISABLED:
+		DRAW_DISABLED:
 			return disabled_texture if disabled_texture else normal_texture
 	return normal_texture
 
 
 ## Gets the current stylebox based on button state
 func _get_current_stylebox() -> StyleBox:
-	match button_state:
-		ButtonState.NORMAL:
+	match get_draw_mode():
+		DRAW_NORMAL:
 			return normal_stylebox
-		ButtonState.HOVER:
+		DRAW_HOVER:
 			return hover_stylebox if hover_stylebox else normal_stylebox
-		ButtonState.PRESSED:
+		DRAW_PRESSED, DRAW_HOVER_PRESSED:
 			return pressed_stylebox if pressed_stylebox else normal_stylebox
-		ButtonState.DISABLED:
+		DRAW_DISABLED:
 			return disabled_stylebox if disabled_stylebox else normal_stylebox
 	return normal_stylebox
-
-
-## Toggles the button between PRESSED and NORMAL states (for toggable buttons).
-func toggle() -> void:
-	if not toggable or is_disabled: return
-	
-	if button_state == ButtonState.PRESSED:
-		button_state = ButtonState.NORMAL
-	else:
-		button_state = ButtonState.PRESSED
-	button_pressed.emit(self)
-#endregion
-
-
-#region Input Handlers
-func _on_mouse_entered() -> void:
-	if is_disabled: return
-	if button_state == ButtonState.NORMAL:
-		button_state = ButtonState.HOVER
-
-
-func _on_mouse_exited() -> void:
-	if is_disabled: return
-	if button_state == ButtonState.HOVER:
-		button_state = ButtonState.NORMAL
-
-
-## Handles mouse input for button functionality.
-func _on_gui_input(event: InputEvent) -> void:
-	if is_disabled: return
-	
-	if event is InputEventMouseButton:
-		var mouse_event = event as InputEventMouseButton
-		if mouse_event.button_index == MOUSE_BUTTON_LEFT:
-			if toggable:
-				# For toggable buttons, toggle on release
-				if not mouse_event.pressed:
-					# If toggle_lock is enabled and button is pressed, don't allow untoggle by click
-					if toggle_lock and button_state == ButtonState.PRESSED: return
-					
-					if button_state == ButtonState.PRESSED:
-						button_state = ButtonState.NORMAL
-					else:
-						button_state = ButtonState.PRESSED
-					button_pressed.emit(self)
-			else:
-				# For non-toggable buttons, show pressed while held down
-				if mouse_event.pressed:
-					button_state = ButtonState.PRESSED
-				elif button_state == ButtonState.PRESSED:
-					button_state = ButtonState.HOVER
-					button_pressed.emit(self)
 #endregion
 
 
 #region Setters
-func _set_toggable(value: bool) -> void:
-	toggable = value
-
-
 func _set_toggle_lock(value: bool) -> void:
 	toggle_lock = value
 
@@ -499,14 +428,6 @@ func _set_texture_size(value: Vector2) -> void:
 	queue_redraw()
 
 
-func _set_is_disabled(value: bool) -> void:
-	is_disabled = value
-	if is_disabled:
-		button_state = ButtonState.DISABLED
-		return
-	
-	button_state = ButtonState.NORMAL
-
 
 func _set_stylebox_interaction(value: bool) -> void:
 	stylebox_interaction = value
@@ -517,12 +438,6 @@ func _set_texture_interaction(value: bool) -> void:
 	texture_interaction = value
 	queue_redraw()
 
-
-func _set_button_state(value: ButtonState) -> void:
-	button_state = value
-	_calculate_layout()
-	update_minimum_size()
-	queue_redraw()
 
 
 #region Appearance

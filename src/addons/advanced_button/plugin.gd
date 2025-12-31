@@ -2,21 +2,9 @@
 extends EditorPlugin
 
 
-func _enable_plugin() -> void:
-	# Add autoloads here.
-	pass
-
-
-func _disable_plugin() -> void:
-	# Remove autoloads here.
-	pass
-
-
 func _enter_tree() -> void:
-	# Initialization of the plugin goes here.
-	pass
+	add_custom_type("AdvancedButton", "BaseButton", preload("advanced_button.gd"), preload("advanced_button.svg"))
 
 
 func _exit_tree() -> void:
-	# Clean-up of the plugin goes here.
-	pass
+	remove_custom_type("AdvancedButton")
