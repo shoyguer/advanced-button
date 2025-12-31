@@ -1,6 +1,8 @@
 # Advanced Button
 A custom button node for Godot that combines textures, labels, and state management into a single button.
 
+Cool Image
+
 ## Why Use Advanced Button?
 Godot's default buttons are built to be modular and very raw, and they are great for their purpose. I decide to create **Advanced Button** to be a comprehensive tool to make it easier to create custom button with a lot of capabilities that may be useful for your and your projects, as it has been for me.
 
@@ -51,9 +53,9 @@ Check out my other Godot plugins:
 
 | Plugin | Description |
 |--------|-------------|
-| [StatPool](https://github.com/shoyguer/stat-pool) | Stat management system |
-| [Seed](https://github.com/shoyguer/seed) | Seed generation system |
-| [TimeTick](https://github.com/shoyguer/time-tick) | Flexible time management system |
+| [<img src="https://raw.githubusercontent.com/shoyguer/stat-pool/refs/heads/main/brand/header_image.png" width="192">](https://github.com/shoyguer/stat-pool) | Stat management system |
+| [<img src="https://raw.githubusercontent.com/shoyguer/seed/refs/heads/main/brand/header_image.png" width="192">](https://github.com/shoyguer/seed) | Seed generation system |
+| [<img src="https://raw.githubusercontent.com/shoyguer/time-tick/refs/heads/main/brand/header_image.png" width="192">](https://github.com/shoyguer/time-tick) | Flexible time management system |
 
 
 ## Support
