@@ -14,7 +14,7 @@ extends BaseButton
 #region Constants & Enums
 const DEFAULT_TEXTURE_SIZE := Vector2.ZERO
 
-## Label position options
+## Label position options.
 enum LabelPosition {
 	## Label positioned below the texture
 	BOTTOM,
@@ -28,7 +28,7 @@ enum LabelPosition {
 	INSIDE
 }
 
-## Label horizontal position options
+## Label horizontal position options.
 enum LabelHorizontalPosition {
 	## Label text aligned to the left
 	LEFT,
@@ -38,7 +38,7 @@ enum LabelHorizontalPosition {
 	RIGHT
 }
 
-## Label vertical position options
+## Label vertical position options.
 enum LabelVerticalPosition {
 	## Label text aligned to the top
 	TOP,
@@ -91,7 +91,7 @@ enum LabelVerticalPosition {
 ## The fixed size of the texture.
 @export var texture_size := Vector2.ZERO: set = _set_texture_size
 ## Button used for reseting texture size to default.
-@export_tool_button("Reset Size", "TextureRect") var _reset_size_action = _reset_texture_size
+@export_tool_button("Set default size", "TextureRect") var _reset_size_action = _reset_texture_size
 ## The texture used when the texture is in its normal state.
 @export var normal_texture: Texture2D = null: set = _set_normal_texture
 ## The texture used when the texture is hovered.

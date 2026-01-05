@@ -21,7 +21,7 @@ This plugin brings out-of-the-box features like:
 | **Others** | 🌐 Web |
 
 ## Requirements
-- [Godot 4.0+](https://godotengine.org/)
+- [Godot 4.3+](https://godotengine.org/)
 
 ## Installation
 1. Download the latest release
