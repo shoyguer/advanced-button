@@ -14,6 +14,36 @@ extends BaseButton
 #region Constants & Enums
 const DEFAULT_TEXTURE_SIZE := Vector2.ZERO
 
+const LABEL_PROPERTIES = [
+	"label_text",
+	"label_settings",
+	"label_separation",
+	"label_position",
+	"label_horizontal_position",
+	"label_vertical_position",
+	"label_offset",
+	"label_margin_left",
+	"label_margin_top",
+	"label_margin_right",
+	"label_margin_bottom"
+]
+
+const TEXTURE_PROPERTIES = [
+	"texture_size",
+	"_reset_size_action",
+	"normal_texture",
+	"hover_texture",
+	"pressed_texture",
+	"disabled_texture"
+]
+
+const STYLEBOX_PROPERTIES = [
+	"normal_stylebox",
+	"hover_stylebox",
+	"pressed_stylebox",
+	"disabled_stylebox"
+]
+
 ## Label position options.
 enum LabelPosition {
 	## Label positioned below the texture
@@ -118,6 +148,20 @@ var _texture_rect := Rect2()
 var _label_rect := Rect2()
 var _cached_label_size := Vector2.ZERO
 #endregion
+
+
+func _validate_property(property: Dictionary) -> void:
+	if not has_label:
+		if property.name in LABEL_PROPERTIES:
+			property.usage = PROPERTY_USAGE_NO_EDITOR
+
+	if not texture_interaction:
+		if property.name in TEXTURE_PROPERTIES:
+			property.usage = PROPERTY_USAGE_NO_EDITOR
+
+	if not stylebox_interaction:
+		if property.name in STYLEBOX_PROPERTIES:
+			property.usage = PROPERTY_USAGE_NO_EDITOR
 
 
 func _ready() -> void:
@@ -519,11 +563,13 @@ func _set_texture_size(value: Vector2) -> void:
 
 func _set_stylebox_interaction(value: bool) -> void:
 	stylebox_interaction = value
+	notify_property_list_changed()
 	queue_redraw()
 
 
 func _set_texture_interaction(value: bool) -> void:
 	texture_interaction = value
+	notify_property_list_changed()
 	queue_redraw()
 
 
@@ -610,6 +656,7 @@ func _set_disabled_texture(value: Texture2D) -> void:
 #region Label
 func _set_has_label(value: bool) -> void:
 	has_label = value
+	notify_property_list_changed()
 	_calculate_layout()
 	update_minimum_size()
 	queue_redraw()

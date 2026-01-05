@@ -90,6 +90,7 @@ shortcut_feedback = true
 shortcut_in_tooltip = true
 script = ExtResource("1_re5vn")
 label_settings = SubResource("LabelSettings_mqt1r")
+_reset_size_action = Callable()
 normal_stylebox = ExtResource("2_mqt1r")
 hover_stylebox = ExtResource("3_8lh5l")
 pressed_stylebox = ExtResource("4_hkalk")
