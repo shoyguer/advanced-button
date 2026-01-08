@@ -6,7 +6,7 @@ A custom button node for Godot that combines textures, labels, and state managem
 ## Why Use Advanced Button?
 Godot's default buttons are built to be modular and very raw, and they are great for their purpose. I decide to create **Advanced Button** to be a comprehensive tool to make it easier to create custom button with a lot of capabilities that may be useful for your and your projects, as it has been for me.
 
-This plugin brings out-of-the-box features like:
+This plugin brings easy out-of-the-box features:
 - Have options for using textures, styleboxes and texts.
 - Handling visual states (hover, pressed, disabled) without complex theme overrides.
 - Positioning labels relative to textures (top, bottom, inside, etc).
