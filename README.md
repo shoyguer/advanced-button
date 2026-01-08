@@ -53,7 +53,7 @@ Check out my other Godot plugins:
 
 | Plugin | Description |
 |--------|-------------|
-| [<img src="https://raw.githubusercontent.com/shoyguer/stat-pool/refs/heads/main/brand/header_image.png" width="192">](https://github.com/shoyguer/stat-pool) | Stat management system |
+| [<img src="https://raw.githubusercontent.com/shoyguer/stat-pool/refs/heads/main/brand/header_image.png" width="192">](https://github.com/shoyguer/stat-pool) | Flexible stat management system (for Health, Mana, Stamina, money etc) |
 | [<img src="https://raw.githubusercontent.com/shoyguer/seed/refs/heads/main/brand/header_image.png" width="192">](https://github.com/shoyguer/seed) | Seed generation system |
 | [<img src="https://raw.githubusercontent.com/shoyguer/time-tick/refs/heads/main/brand/header_image.png" width="192">](https://github.com/shoyguer/time-tick) | Flexible time management system |
 
