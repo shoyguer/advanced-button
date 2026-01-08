@@ -1,29 +1,75 @@
-﻿name: Package Plugin
-
+﻿name: Build Plugin
 on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version to release (e.g., 1.0.0)'
+        description: 'Version to release (e.g., 1.1, 2.0.1)'
         required: true
+        type: string
         default: '1.0'
 
+env:
+  PLUGIN_NAME: "advanced_button"
+
 jobs:
-  package:
-    name: Package Plugin
-    runs-on: ubuntu-latest
-    
+  build:
+    runs-on: ubuntu-22.04
     steps:
-      - name: Checkout Repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Create Zip Archive
+      - name: Prepare files
         run: |
-          cd src
-          zip -r ../advanced_button_v${{ inputs.version }}.zip addons/advanced_button
+          mkdir -p release/addons/${{ env.PLUGIN_NAME }}
+          # Copy the plugin folder from src/addons to the release folder
+          cp -r src/addons/${{ env.PLUGIN_NAME }}/* release/addons/${{ env.PLUGIN_NAME }}/
+          
+          # Copy LICENSE if it exists in the root
+          if [ -f "LICENSE" ]; then
+            cp LICENSE release/addons/${{ env.PLUGIN_NAME }}/LICENSE
+          fi
+          
+          # Copy README if it exists
+          if [ -f "README.md" ]; then
+            cp README.md release/addons/${{ env.PLUGIN_NAME }}/README.md
+          fi
+
+      - name: Create zip archive
+        run: |
+          cd release
+          zip -r "../${{ env.PLUGIN_NAME }}_${{ github.event.inputs.version }}.zip" addons
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: advanced_button_v${{ inputs.version }}
-          path: advanced_button_v${{ inputs.version }}.zip
+          name: "Release File"
+          path: "${{ env.PLUGIN_NAME }}_${{ github.event.inputs.version }}.zip"
+          retention-days: 1
+
+  release:
+    runs-on: ubuntu-22.04
+    needs: build
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download release artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: "Release File"
+          path: ./
+
+      - name: Create GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ github.event.inputs.version }}" \
+            --title "v${{ github.event.inputs.version }} - Release" \
+            --notes "## ${{ env.PLUGIN_NAME }} v${{ github.event.inputs.version }}
+
+          ### Installation:
+          1. Download the \`${{ env.PLUGIN_NAME }}_${{ github.event.inputs.version }}.zip\` file below
+          2. Extract it to your Godot project's root directory (the zip contains the \`addons\` folder structure)" \
+            "${{ env.PLUGIN_NAME }}_${{ github.event.inputs.version }}.zip"
