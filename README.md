@@ -1,7 +1,7 @@
 # Advanced Button
 A custom button node for Godot that combines textures, labels, and state management into a single button.
 
-Cool Image
+![Header Image](https://raw.githubusercontent.com/shoyguer/advanced-button/refs/heads/main/src/brand/header_image.png)
 
 ## Why Use Advanced Button?
 Godot's default buttons are built to be modular and very raw, and they are great for their purpose. I decide to create **Advanced Button** to be a comprehensive tool to make it easier to create custom button with a lot of capabilities that may be useful for your and your projects, as it has been for me.
