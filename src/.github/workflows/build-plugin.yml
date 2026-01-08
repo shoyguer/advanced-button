@@ -1,0 +1,29 @@
+﻿name: Package Plugin
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., 1.0.0)'
+        required: true
+        default: '1.0'
+
+jobs:
+  package:
+    name: Package Plugin
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Create Zip Archive
+        run: |
+          cd src
+          zip -r ../advanced_button_v${{ inputs.version }}.zip addons/advanced_button
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: advanced_button_v${{ inputs.version }}
+          path: advanced_button_v${{ inputs.version }}.zip
