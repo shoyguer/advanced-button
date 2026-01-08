@@ -4,9 +4,9 @@
 @tool
 class_name AdvancedButton
 extends BaseButton
-## Advanced general use button.
+## Deeply customizable simple button.
 ##
-## Customizable button with comprehensive tools to fit your UI/UX needs.
+## Button with texture, stylebox, label and more customization options.
 
 
 #region Properties
@@ -42,6 +42,13 @@ const STYLEBOX_PROPERTIES = [
 	"hover_stylebox",
 	"pressed_stylebox",
 	"disabled_stylebox"
+]
+
+const MODULATE_PROPERTIES = [
+	"normal_modulate",
+	"hover_modulate",
+	"pressed_modulate",
+	"disabled_modulate"
 ]
 
 ## Label position options.
@@ -81,11 +88,17 @@ enum LabelVerticalPosition {
 
 ## If enabled, a toggled (pressed) button cannot be untoggled by clicking, only by code.
 @export var toggle_lock: bool = false: set = _set_toggle_lock
+## Whether the button uses label text.
+@export var use_label: bool = true: set = _set_use_label
+## Whether the textures should be used.
+@export var use_texture: bool = false: set = _set_use_texture
+## Whether the styleboxes should be used.
+@export var use_stylebox: bool = true: set = _set_use_stylebox
+## Whether the modulation should be used.
+@export var use_modulate: bool = false: set = _set_use_modulate
 
 #region Label
 @export_group("Label")
-## Whether the button uses label text.
-@export var has_label: bool = true: set = _set_has_label
 ## The text displayed on the label.
 @export var label_text: String = "Button": set = _set_label_text
 ## The settings for the label (font, color, shadow, etc).
@@ -116,8 +129,6 @@ enum LabelVerticalPosition {
 
 #region Appearance
 @export_group("Textures")
-## Whether the textures should change with interaction and disabled state.
-@export var texture_interaction: bool = false: set = _set_texture_interaction
 ## The fixed size of the texture.
 @export var texture_size := Vector2.ZERO: set = _set_texture_size
 ## Button used for reseting texture size to default.
@@ -132,8 +143,6 @@ enum LabelVerticalPosition {
 @export var disabled_texture: Texture2D = null: set = _set_disabled_texture
 
 @export_group("Style Boxes")
-## Whether the stylebox should change with interaction and disabled state.
-@export var stylebox_interaction: bool = true: set = _set_stylebox_interaction
 ## The stylebox used when the button is in its normal state.
 @export var normal_stylebox: StyleBox = null: set = _set_normal_stylebox
 ## The stylebox used when the button is hovered.
@@ -142,6 +151,16 @@ enum LabelVerticalPosition {
 @export var pressed_stylebox: StyleBox = null: set = _set_pressed_stylebox
 ## The stylebox used when the button is disabled.
 @export var disabled_stylebox: StyleBox = null: set = _set_disabled_stylebox
+
+@export_group("Modulation")
+## The modulation used when the button is in its normal state.
+@export var normal_modulate: Color = Color.WHITE: set = _set_normal_modulate
+## The modulation used when the button is hovered.
+@export var hover_modulate: Color = Color.WHITE: set = _set_hover_modulate
+## The modulation used when the button is pressed.
+@export var pressed_modulate: Color = Color.WHITE: set = _set_pressed_modulate
+## The modulation used when the button is disabled.
+@export var disabled_modulate: Color = Color.WHITE: set = _set_disabled_modulate
 #endregion
 
 var _texture_rect := Rect2()
@@ -151,16 +170,20 @@ var _cached_label_size := Vector2.ZERO
 
 
 func _validate_property(property: Dictionary) -> void:
-	if not has_label:
+	if not use_label:
 		if property.name in LABEL_PROPERTIES:
 			property.usage = PROPERTY_USAGE_NO_EDITOR
 
-	if not texture_interaction:
+	if not use_texture:
 		if property.name in TEXTURE_PROPERTIES:
 			property.usage = PROPERTY_USAGE_NO_EDITOR
 
-	if not stylebox_interaction:
+	if not use_stylebox:
 		if property.name in STYLEBOX_PROPERTIES:
+			property.usage = PROPERTY_USAGE_NO_EDITOR
+
+	if not use_modulate:
+		if property.name in MODULATE_PROPERTIES:
 			property.usage = PROPERTY_USAGE_NO_EDITOR
 
 
@@ -200,24 +223,24 @@ func _get_minimum_size() -> Vector2:
 		
 		# 1. Texture Size
 		var tex_size = DEFAULT_TEXTURE_SIZE
-		if texture_interaction:
+		if use_texture:
 			if tex: tex_size = tex.get_size()
 			if texture_size != Vector2.ZERO: tex_size = texture_size
 		
 		# 2. StyleBox Margins
 		var sb_margins = Vector2.ZERO
-		if stylebox_interaction and sb:
+		if use_stylebox and sb:
 			sb_margins.x = sb.get_margin(SIDE_LEFT) + sb.get_margin(SIDE_RIGHT)
 			sb_margins.y = sb.get_margin(SIDE_TOP) + sb.get_margin(SIDE_BOTTOM)
 		
 		# 3. Content Size
 		var content_size = tex_size
 		
-		if has_label:
+		if use_label:
 			var label_size = _cached_label_size
 			label_size += Vector2(label_margin_left + label_margin_right, label_margin_top + label_margin_bottom)
 			
-			var padding = float(label_separation) if (texture_interaction and tex_size != Vector2.ZERO) else 0.0
+			var padding = float(label_separation) if (use_texture and tex_size != Vector2.ZERO) else 0.0
 			
 			match label_position:
 				LabelPosition.BOTTOM, LabelPosition.TOP:
@@ -237,15 +260,15 @@ func _draw() -> void:
 	_calculate_layout()
 	
 	# Draw stylebox
-	if stylebox_interaction:
+	if use_stylebox:
 		_draw_stylebox()
 	
 	# Draw texture
-	if texture_interaction:
+	if use_texture:
 		_draw_texture()
 	
 	# Draw label
-	if has_label:
+	if use_label:
 		_draw_label()
 
 
@@ -259,7 +282,7 @@ func _toggled(toggled_on: bool) -> void:
 func _calculate_layout() -> void:
 	var tex_size = DEFAULT_TEXTURE_SIZE
 	
-	if texture_interaction:
+	if use_texture:
 		var texture_to_draw = _get_current_texture()
 		
 		if texture_to_draw:
@@ -269,13 +292,13 @@ func _calculate_layout() -> void:
 			tex_size = texture_size
 	
 	# Padding between texture and label
-	var padding = float(label_separation) if texture_interaction else 0.0
+	var padding = float(label_separation) if use_texture else 0.0
 
 	# Calculate label size if needed
 	var label_text_size = Vector2.ZERO
 	var label_full_size = Vector2.ZERO
 	
-	if has_label:
+	if use_label:
 		label_text_size = _cached_label_size
 		label_full_size = label_text_size + Vector2(label_margin_left + label_margin_right, label_margin_top + label_margin_bottom)
 	
@@ -334,7 +357,7 @@ func _calculate_layout() -> void:
 	var sb_margin_bottom = 0.0
 	
 	var sb = _get_current_stylebox()
-	if stylebox_interaction and sb:
+	if use_stylebox and sb:
 		sb_margin_left = sb.get_margin(SIDE_LEFT)
 		sb_margin_top = sb.get_margin(SIDE_TOP)
 		sb_margin_right = sb.get_margin(SIDE_RIGHT)
@@ -411,13 +434,17 @@ func _draw_texture() -> void:
 	var texture_to_draw = _get_current_texture()
 	if not texture_to_draw: return
 	
+	var modulate_color = Color.WHITE
+	if use_modulate:
+		modulate_color = _get_current_modulate()
+	
 	draw_set_transform(_texture_rect.position)
-	draw_texture_rect(texture_to_draw, Rect2(Vector2.ZERO, _texture_rect.size), false)
+	draw_texture_rect(texture_to_draw, Rect2(Vector2.ZERO, _texture_rect.size), false, modulate_color)
 	draw_set_transform(Vector2.ZERO)
 
 
 func _draw_label() -> void:
-	if not has_label: return
+	if not use_label: return
 	
 	var font = ThemeDB.fallback_font
 	var font_size = ThemeDB.fallback_font_size
@@ -439,6 +466,12 @@ func _draw_label() -> void:
 		shadow_size = label_settings.shadow_size
 		shadow_color = label_settings.shadow_color
 		shadow_offset = label_settings.shadow_offset
+	
+	if use_modulate:
+		var mod = _get_current_modulate()
+		font_color *= mod
+		outline_color *= mod
+		shadow_color *= mod
 	
 	var text_pos = _label_rect.position
 	
@@ -537,6 +570,20 @@ func _get_current_stylebox() -> StyleBox:
 		DRAW_DISABLED:
 			return disabled_stylebox if disabled_stylebox else normal_stylebox
 	return normal_stylebox
+
+
+## Gets the current modulation based on button state
+func _get_current_modulate() -> Color:
+	match get_draw_mode():
+		DRAW_NORMAL:
+			return normal_modulate
+		DRAW_HOVER:
+			return hover_modulate
+		DRAW_PRESSED, DRAW_HOVER_PRESSED:
+			return pressed_modulate
+		DRAW_DISABLED:
+			return disabled_modulate
+	return normal_modulate
 #endregion
 
 
@@ -561,14 +608,20 @@ func _set_texture_size(value: Vector2) -> void:
 
 
 
-func _set_stylebox_interaction(value: bool) -> void:
-	stylebox_interaction = value
+func _set_use_stylebox(value: bool) -> void:
+	use_stylebox = value
 	notify_property_list_changed()
 	queue_redraw()
 
 
-func _set_texture_interaction(value: bool) -> void:
-	texture_interaction = value
+func _set_use_texture(value: bool) -> void:
+	use_texture = value
+	notify_property_list_changed()
+	queue_redraw()
+
+
+func _set_use_modulate(value: bool) -> void:
+	use_modulate = value
 	notify_property_list_changed()
 	queue_redraw()
 
@@ -650,12 +703,32 @@ func _set_disabled_texture(value: Texture2D) -> void:
 	_calculate_layout()
 	update_minimum_size()
 	queue_redraw()
+
+
+func _set_normal_modulate(value: Color) -> void:
+	normal_modulate = value
+	queue_redraw()
+
+
+func _set_hover_modulate(value: Color) -> void:
+	hover_modulate = value
+	queue_redraw()
+
+
+func _set_pressed_modulate(value: Color) -> void:
+	pressed_modulate = value
+	queue_redraw()
+
+
+func _set_disabled_modulate(value: Color) -> void:
+	disabled_modulate = value
+	queue_redraw()
 #endregion
 
 
 #region Label
-func _set_has_label(value: bool) -> void:
-	has_label = value
+func _set_use_label(value: bool) -> void:
+	use_label = value
 	notify_property_list_changed()
 	_calculate_layout()
 	update_minimum_size()
