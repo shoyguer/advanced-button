@@ -1,12 +1,12 @@
 # Advanced Button
 A custom button node for Godot that combines textures, labels, and state management into a single button.
 
-Cool Image
+![Header Image](https://raw.githubusercontent.com/shoyguer/advanced-button/refs/heads/main/src/brand/header_image.png)
 
 ## Why Use Advanced Button?
 Godot's default buttons are built to be modular and very raw, and they are great for their purpose. I decide to create **Advanced Button** to be a comprehensive tool to make it easier to create custom button with a lot of capabilities that may be useful for your and your projects, as it has been for me.
 
-This plugin brings out-of-the-box features like:
+This plugin brings easy out-of-the-box features:
 - Have options for using textures, styleboxes and texts.
 - Handling visual states (hover, pressed, disabled) without complex theme overrides.
 - Positioning labels relative to textures (top, bottom, inside, etc).
@@ -53,7 +53,7 @@ Check out my other Godot plugins:
 
 | Plugin | Description |
 |--------|-------------|
-| [<img src="https://raw.githubusercontent.com/shoyguer/stat-pool/refs/heads/main/brand/header_image.png" width="192">](https://github.com/shoyguer/stat-pool) | Stat management system |
+| [<img src="https://raw.githubusercontent.com/shoyguer/stat-pool/refs/heads/main/brand/header_image.png" width="192">](https://github.com/shoyguer/stat-pool) | Flexible stat management system (for Health, Mana, Stamina, money etc) |
 | [<img src="https://raw.githubusercontent.com/shoyguer/seed/refs/heads/main/brand/header_image.png" width="192">](https://github.com/shoyguer/seed) | Seed generation system |
 | [<img src="https://raw.githubusercontent.com/shoyguer/time-tick/refs/heads/main/brand/header_image.png" width="192">](https://github.com/shoyguer/time-tick) | Flexible time management system |
 
