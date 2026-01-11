@@ -13,6 +13,11 @@ extends BaseButton
 
 #region Constants & Enums
 const DEFAULT_TEXTURE_SIZE := Vector2.ZERO
+const LABEL_SETTINGS: LabelSettings = preload("res://addons/advanced_button/resources/label_settings.tres")
+const NORMAL_STYLEBOX_RES: StyleBoxFlat = preload("res://addons/advanced_button/resources/normal_stylebox.tres")
+const HOVER_STYLEBOX_RES: StyleBoxFlat = preload("res://addons/advanced_button/resources/hover_stylebox.tres")
+const PRESSED_STYLEBOX_RES: StyleBoxFlat = preload("res://addons/advanced_button/resources/pressed_stylebox.tres")
+const DISABLED_STYLEBOX_RES: StyleBoxFlat = preload("res://addons/advanced_button/resources/disabled_stylebox.tres")
 
 const LABEL_PROPERTIES = [
 	"label_text",
@@ -102,7 +107,7 @@ enum LabelVerticalPosition {
 ## The text displayed on the label.
 @export var label_text: String = "Button": set = _set_label_text
 ## The settings for the label (font, color, shadow, etc).
-@export var label_settings: LabelSettings: set = _set_label_settings
+@export var label_settings: LabelSettings = LABEL_SETTINGS: set = _set_label_settings
 
 @export_subgroup("Label Positioning")
 ## The separation between the label and the texture.
@@ -144,13 +149,13 @@ enum LabelVerticalPosition {
 
 @export_group("Style Boxes")
 ## The stylebox used when the button is in its normal state.
-@export var normal_stylebox: StyleBox = null: set = _set_normal_stylebox
+@export var normal_stylebox: StyleBox = NORMAL_STYLEBOX_RES: set = _set_normal_stylebox
 ## The stylebox used when the button is hovered.
-@export var hover_stylebox: StyleBox = null: set = _set_hover_stylebox
+@export var hover_stylebox: StyleBox = HOVER_STYLEBOX_RES: set = _set_hover_stylebox
 ## The stylebox used when the button is pressed.
-@export var pressed_stylebox: StyleBox = null: set = _set_pressed_stylebox
+@export var pressed_stylebox: StyleBox = PRESSED_STYLEBOX_RES: set = _set_pressed_stylebox
 ## The stylebox used when the button is disabled.
-@export var disabled_stylebox: StyleBox = null: set = _set_disabled_stylebox
+@export var disabled_stylebox: StyleBox = DISABLED_STYLEBOX_RES: set = _set_disabled_stylebox
 
 @export_group("Modulation")
 ## The modulation used when the button is in its normal state.

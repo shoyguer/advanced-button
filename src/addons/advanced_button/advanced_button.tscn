@@ -1,12 +1,6 @@
-[gd_scene load_steps=7 format=3 uid="uid://cugj4jwjj2tlr"]
+[gd_scene load_steps=2 format=3 uid="uid://cugj4jwjj2tlr"]
 
 [ext_resource type="Script" uid="uid://b6jkjc7nd63rg" path="res://addons/advanced_button/advanced_button.gd" id="1_re5vn"]
-[ext_resource type="StyleBox" uid="uid://bobrbfii10io0" path="res://addons/advanced_button/style_boxes/normal_stylebox.tres" id="2_mqt1r"]
-[ext_resource type="StyleBox" uid="uid://bvq4uqr75yb8j" path="res://addons/advanced_button/style_boxes/hover_stylebox.tres" id="3_8lh5l"]
-[ext_resource type="StyleBox" uid="uid://b3t27la7c3d2x" path="res://addons/advanced_button/style_boxes/pressed_stylebox.tres" id="4_hkalk"]
-[ext_resource type="StyleBox" uid="uid://48fg0hc6ii2k" path="res://addons/advanced_button/style_boxes/disabled_stylebox.tres" id="5_77e18"]
-
-[sub_resource type="LabelSettings" id="LabelSettings_mqt1r"]
 
 [node name="AdvancedButton" type="BaseButton"]
 _import_path = NodePath("")
@@ -89,9 +83,4 @@ shortcut = null
 shortcut_feedback = true
 shortcut_in_tooltip = true
 script = ExtResource("1_re5vn")
-label_settings = SubResource("LabelSettings_mqt1r")
 _reset_size_action = Callable()
-normal_stylebox = ExtResource("2_mqt1r")
-hover_stylebox = ExtResource("3_8lh5l")
-pressed_stylebox = ExtResource("4_hkalk")
-disabled_stylebox = ExtResource("5_77e18")
