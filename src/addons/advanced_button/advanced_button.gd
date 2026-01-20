@@ -631,8 +631,20 @@ func _set_use_modulate(value: bool) -> void:
 	queue_redraw()
 
 
-
 #region Appearance
+func _on_texture_changed() -> void:
+	_calculate_layout()
+	update_minimum_size()
+	queue_redraw()
+
+
+func _on_normal_texture_changed() -> void:
+	if normal_texture:
+		self.texture_size = normal_texture.get_size()
+	else:
+		_on_texture_changed()
+
+
 func _on_stylebox_changed() -> void:
 	_calculate_layout()
 	update_minimum_size()
@@ -680,34 +692,43 @@ func _set_disabled_stylebox(value: StyleBox) -> void:
 
 
 func _set_normal_texture(value: Texture2D) -> void:
+	if normal_texture == value: return
+	if normal_texture and normal_texture.changed.is_connected(_on_normal_texture_changed):
+		normal_texture.changed.disconnect(_on_normal_texture_changed)
 	normal_texture = value
-	if normal_texture:
-		texture_size = normal_texture.get_size()
-
-	_calculate_layout()
-	update_minimum_size()
-	queue_redraw()
+	if normal_texture and not normal_texture.changed.is_connected(_on_normal_texture_changed):
+		normal_texture.changed.connect(_on_normal_texture_changed)
+	_on_normal_texture_changed()
 
 
 func _set_hover_texture(value: Texture2D) -> void:
+	if hover_texture == value: return
+	if hover_texture and hover_texture.changed.is_connected(_on_texture_changed):
+		hover_texture.changed.disconnect(_on_texture_changed)
 	hover_texture = value
-	_calculate_layout()
-	update_minimum_size()
-	queue_redraw()
+	if hover_texture and not hover_texture.changed.is_connected(_on_texture_changed):
+		hover_texture.changed.connect(_on_texture_changed)
+	_on_texture_changed()
 
 
 func _set_pressed_texture(value: Texture2D) -> void:
+	if pressed_texture == value: return
+	if pressed_texture and pressed_texture.changed.is_connected(_on_texture_changed):
+		pressed_texture.changed.disconnect(_on_texture_changed)
 	pressed_texture = value
-	_calculate_layout()
-	update_minimum_size()
-	queue_redraw()
+	if pressed_texture and not pressed_texture.changed.is_connected(_on_texture_changed):
+		pressed_texture.changed.connect(_on_texture_changed)
+	_on_texture_changed()
 
 
 func _set_disabled_texture(value: Texture2D) -> void:
+	if disabled_texture == value: return
+	if disabled_texture and disabled_texture.changed.is_connected(_on_texture_changed):
+		disabled_texture.changed.disconnect(_on_texture_changed)
 	disabled_texture = value
-	_calculate_layout()
-	update_minimum_size()
-	queue_redraw()
+	if disabled_texture and not disabled_texture.changed.is_connected(_on_texture_changed):
+		disabled_texture.changed.connect(_on_texture_changed)
+	_on_texture_changed()
 
 
 func _set_normal_modulate(value: Color) -> void:
